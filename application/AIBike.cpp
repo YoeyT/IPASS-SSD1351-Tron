@@ -4,10 +4,11 @@ AIBike::AIBike(uint8_t locationx, uint8_t locationy, color color, char direction
     bike(locationx, locationy, color, direction)
 {}
 
+//very dumb and poorly made AI
 void AIBike::MakeDecision(const bike& otherPlayer, const std::array<wall, 4>& borderWalls)
 {
     //random is seeded with both locations of the AI, this way every place is unique from the others
-    srand((locationx * locationy * otherPlayer.GetLocationx() * otherPlayer.GetLocationy() * 86632));
+    srand((locationx * locationy * otherPlayer.GetLocationx() * otherPlayer.GetLocationy() * 86632)); //most magic of magic numbers
     int random = rand();
 
     //AI inputs
@@ -23,12 +24,13 @@ void AIBike::MakeDecision(const bike& otherPlayer, const std::array<wall, 4>& bo
 
     //fill available directions
     //some directions have priority over others depending on the situation
+    availableDirections[0] = direction;
+    
+    //schrijf jezelf nooit in een situatie dat je zoiets moet schrijven
     switch(direction)
     {
         case 'N':
-            availableDirections[0] = 'N';
-
-            if(locationx > 63)
+            if(locationx > 63) //magic number
             {
                 availableDirections[1] = 'E';
                 availableDirections[2] = 'W';
@@ -40,7 +42,6 @@ void AIBike::MakeDecision(const bike& otherPlayer, const std::array<wall, 4>& bo
             }
             break;
         case 'S':
-            availableDirections[0] = 'S';
             if(locationx > 63)
             {
                 availableDirections[1] = 'E';
@@ -53,7 +54,6 @@ void AIBike::MakeDecision(const bike& otherPlayer, const std::array<wall, 4>& bo
             }
             break;
         case 'W':
-            availableDirections[0] = 'W';
             if(locationy > 63)
             {
                 availableDirections[1] = 'N';
@@ -66,7 +66,6 @@ void AIBike::MakeDecision(const bike& otherPlayer, const std::array<wall, 4>& bo
             }
             break;
         case 'E':
-            availableDirections[0] = 'E';
             if(locationy > 63)
             {
                 availableDirections[1] = 'N';
@@ -89,6 +88,7 @@ void AIBike::MakeDecision(const bike& otherPlayer, const std::array<wall, 4>& bo
     bike twinDummy = *this;
 
     //move twin head out of the way
+    //wat????
     twinDummy.ReadAndMove(up, down, left, right);
     twinDummy.ReadAndMove(up, down, left, right);
     twinDummy.ReadAndMove(up, down, left, right);
@@ -122,28 +122,14 @@ void AIBike::MakeDecision(const bike& otherPlayer, const std::array<wall, 4>& bo
         }
 
         //change direction to an available direction if forward isn't an option
-        switch(dir)
-        {
-        case 'N':
-            newDirection = 'N';
-            break;
-        case 'S':
-            newDirection = 'S';
-            break;
-        case 'W':
-            newDirection = 'W';
-            break;
-        case 'E':
-            newDirection = 'E';
-            break;
-        }
+        newDirection = dir;
     }
 
     //translate the choice to inputs
-    up = newDirection == 'N' ? true : false;
-    down = newDirection == 'S' ? true : false;
-    left = newDirection == 'W' ? true : false;
-    right = newDirection == 'E' ? true : false;
+    up = newDirection == 'N'
+    down = newDirection == 'S'
+    left = newDirection == 'W'
+    right = newDirection == 'E'
 
     //make the call
     ReadAndMove(up, down, left, right);
